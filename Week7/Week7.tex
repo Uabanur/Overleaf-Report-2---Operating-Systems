@@ -1,0 +1,30 @@
+\section{Week 7}
+
+\subsection{Threads}
+
+The concept of multiple threads per process is now introduced to the operating system. In order to see how this is handled, we first have to outline how processes are created.
+
+Creating a process is done by the following steps:
+\begin{itemize}
+    \item Find a process not in use.
+    \item If no process was found, return \texttt{ERROR}.
+    \item Find a thread not in use.
+    \item If no thread was found, return \texttt{ERROR}.
+    \item If both process and thread was found, update them and return \texttt{ALL\_OK}.
+\end{itemize}
+
+For the final step, the process' and thread's \texttt{used} flags are set to 1, the process' count of inner threads is set to 1, the thread's inner process pointer is set to the found process and the thread's instruction pointer is set to the value in the \texttt{execution\_table} corresponding to the program assigned. 
+
+This way a new process is created and assigned the program given. The process has a single thread, and only if both the process and thread were created does the system call return \texttt{ALL\_OK}.
+
+Creating a thread is a similar case, accept we don't need to find a process, since it will be assigned to the current thread's process. The steps are then condensed into:
+
+\begin{itemize}
+    \item Find a thread not in use.
+    \item If no thread was found, return \texttt{ERROR}.
+    \item If thread was found, update it and return \texttt{ALL\_OK}.
+\end{itemize}
+
+Where updating the thread involves setting the \texttt{used} flag to 1, the process is set to the current thread's process, the inner thread count of the process is incremented and the thread's instruction and stack pointers are set to the given values from registers \texttt{edi} and \texttt{esi} of the current thread.
+
+Since the scheduler already schedules jobs by threads, no change is needed to control this new feature.
